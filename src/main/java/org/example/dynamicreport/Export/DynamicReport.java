@@ -29,11 +29,13 @@ import static org.example.dynamicreport.Utility.Styles.*;
 public class DynamicReport {
     private static final String REPORT_TITLE = "Holidays";
     private static final String CHART_TITLE = "Holidays each month";
+    private static final String HEADER_CELL_TITLE = "State / Mese";
 
     private static final String IMG_SOURCE_PATH = "src/main/resources/cedacri.png";
     private static final String EXPORTED_PDF_FILENAME = "DynamicHolidays";
     private static final String EXPORTED_PDF_TYPE = ".pdf";
     private static final String EXPORTED_IMAGE_FILENAME = "DynamicHolidays";
+    private static final String EXPORTED_IMAGE_TYPE = ".png";
     private static final ImageType IMAGE_TYPE = ImageType.PNG;
 
     private static final int IMG_WIDTH = 190;
@@ -43,7 +45,7 @@ public class DynamicReport {
     private static final boolean SHOW_BAR_CHART_VALUES = true;
 
     private static final String QUERY_HOLIDAYS = "select holiday_name as name, holiday_date as date, country from holiday";
-    private static final String QUERY_CROSSTAB = "select MONTH(STR_TO_DATE(holiday_date, '%d/%m/%Y')) as month, country from holiday;";
+    private static final String QUERY_CROSSTAB = "select MONTH(STR_TO_DATE(holiday_date, '%d/%m/%Y')) as month, case when country = 'Italia' THEN 'IT' when country = 'Moldavia' then 'MD' end as country from holiday";
     private static final String QUERY_CHART = "select country, MONTHNAME(STR_TO_DATE(holiday_date, '%d/%m/%Y')) as month, COUNT(MONTH(STR_TO_DATE(holiday_date, '%d/%m/%Y'))) as count from holiday group by month, country;";
 
     public DynamicReport(String path) {
@@ -56,7 +58,7 @@ public class DynamicReport {
 
     private static void createReport(String path) {
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(path + EXPORTED_PDF_FILENAME + EXPORTED_PDF_TYPE);
-        JasperImageExporterBuilder imgExporter = export.imageExporter(path + EXPORTED_IMAGE_FILENAME, IMAGE_TYPE);
+        JasperImageExporterBuilder imgExporter = export.imageExporter(path + EXPORTED_IMAGE_FILENAME + EXPORTED_IMAGE_TYPE, IMAGE_TYPE);
 
         try (Connection connection = ConnectionManager.createConnection()) {
             report().columns(
@@ -79,7 +81,7 @@ public class DynamicReport {
                     .toPdf(pdfExporter);
 
             String pdf = EXPORTED_PDF_FILENAME + EXPORTED_PDF_TYPE;
-            String img = EXPORTED_IMAGE_FILENAME + '.' + IMAGE_TYPE;
+            String img = EXPORTED_IMAGE_FILENAME + EXPORTED_IMAGE_TYPE;
             System.out.println(pdf + " and " + img + " have been exported successfully in " + path);
         } catch (SQLException | DRException e) {
             throw new RuntimeException(e);
@@ -110,6 +112,7 @@ public class DynamicReport {
 
         return ctab.crosstab()
                 .setDataSource(createDataSource(connection, QUERY_CROSSTAB))
+                .headerCell(cmp.text(HEADER_CELL_TITLE))
                 .rowGroups(rowGroup).setCellWidth(CROSSTAB_CELL_WIDTH)
                 .columnGroups(columnGroup)
                 .measures(ctab.measure("month", Integer.class, Calculation.COUNT));

@@ -20,4 +20,4 @@
 
 ---
 ## Report
-![Report Image](src/main/resources/DynamicHolidays)
+![Report Image](src/main/resources/DynamicHolidays.png)

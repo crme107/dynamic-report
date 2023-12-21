@@ -9,9 +9,10 @@ import java.awt.*;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 
 public class Styles {
+    private static final String TABLE_HEADER_COLOR = "#CFD9E6";
+
     public static StyleBuilder titleStyle = stl.style()
             .setFontSize(22)
-            .setLeftIndent(15)
             .setTopPadding(20)
             .setBottomPadding(20)
             .setVerticalTextAlignment(VerticalTextAlignment.MIDDLE)
@@ -23,15 +24,13 @@ public class Styles {
 
     public static StyleBuilder columnTitleStyle = stl.style()
             .setFontSize(13)
-            .setPadding(6)
-            .setBackgroundColor(Color.decode("#00AEEF"))
+            .setPadding(4)
+            .setBackgroundColor(Color.decode(TABLE_HEADER_COLOR))
             .setBorder(stl.pen1Point())
             .setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
 
     public static StyleBuilder columnStyle = stl.style()
-            .setPadding(4)
-            .setLeftIndent(10)
-            .setRightIndent(10)
+            .setPadding(3)
             .setBorder(stl.pen1Point())
             .setVerticalTextAlignment(VerticalTextAlignment.MIDDLE)
             .setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
