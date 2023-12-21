@@ -1,4 +1,4 @@
-package org.example.Utility;
+package org.example.dynamicreport.Utility;
 
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
@@ -8,7 +8,7 @@ import java.awt.*;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 
-public class StyleManager {
+public class Styles {
     public static StyleBuilder titleStyle = stl.style()
             .setFontSize(22)
             .setLeftIndent(15)
