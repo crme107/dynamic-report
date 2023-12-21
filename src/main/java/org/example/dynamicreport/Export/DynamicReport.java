@@ -1,6 +1,8 @@
 package org.example.dynamicreport.Export;
 
+import net.sf.dynamicreports.jasper.builder.export.JasperImageExporterBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
+import net.sf.dynamicreports.jasper.constant.ImageType;
 import net.sf.dynamicreports.report.builder.chart.BarChartBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.ImageBuilder;
@@ -29,7 +31,10 @@ public class DynamicReport {
     private static final String CHART_TITLE = "Holidays each month";
 
     private static final String IMG_SOURCE_PATH = "src/main/resources/cedacri.png";
-    private static final String EXPORTED_PDF_FILENAME = "DynamicHolidays.pdf";
+    private static final String EXPORTED_PDF_FILENAME = "DynamicHolidays";
+    private static final String EXPORTED_PDF_TYPE = ".pdf";
+    private static final String EXPORTED_IMAGE_FILENAME = "DynamicHolidays";
+    private static final ImageType IMAGE_TYPE = ImageType.PNG;
 
     private static final int IMG_WIDTH = 190;
     private static final int IMG_HEIGHT = 62;
@@ -50,7 +55,8 @@ public class DynamicReport {
     }
 
     private static void createReport(String path) {
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(path + EXPORTED_PDF_FILENAME);
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(path + EXPORTED_PDF_FILENAME + EXPORTED_PDF_TYPE);
+        JasperImageExporterBuilder imgExporter = export.imageExporter(path + EXPORTED_IMAGE_FILENAME, IMAGE_TYPE);
 
         try (Connection connection = ConnectionManager.createConnection()) {
             report().columns(
@@ -69,9 +75,12 @@ public class DynamicReport {
                             .add(createBarChart(connection))
                             .add(createCrosstab(connection).setStyle(crosstabStyle))
                     )
+                    .toImage(imgExporter)
                     .toPdf(pdfExporter);
 
-            System.out.println(EXPORTED_PDF_FILENAME + " has been exported successfully in " + path);
+            String pdf = EXPORTED_PDF_FILENAME + EXPORTED_PDF_TYPE;
+            String img = EXPORTED_IMAGE_FILENAME + '.' + IMAGE_TYPE;
+            System.out.println(pdf + " and " + img + " have been exported successfully in " + path);
         } catch (SQLException | DRException e) {
             throw new RuntimeException(e);
         }
